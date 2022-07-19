@@ -6,17 +6,17 @@ public class Book {
     private String author;
     private int pages;
     private String imageUrl;
-    private String shoryDesc;
+    private String shortDesc;
     private String longDesc;
     private boolean isExpanded;
 
-    public Book(int id, String name, String author, int pages, String imageUrl, String shoryDesc, String longDesc) {
+    public Book(int id, String name, String author, int pages, String imageUrl, String shortDesc, String longDesc) {
         this.id = id;
         this.name = name;
         this.author = author;
         this.pages = pages;
         this.imageUrl = imageUrl;
-        this.shoryDesc = shoryDesc;
+        this.shortDesc = shortDesc;
         this.longDesc = longDesc;
         isExpanded = false;
     }
@@ -69,12 +69,12 @@ public class Book {
         this.imageUrl = imageUrl;
     }
 
-    public String getShoryDesc() {
-        return shoryDesc;
+    public String getShortDesc() {
+        return shortDesc;
     }
 
-    public void setShoryDesc(String shoryDesc) {
-        this.shoryDesc = shoryDesc;
+    public void setShortDesc(String shortDesc) {
+        this.shortDesc = shortDesc;
     }
 
     public String getLongDesc() {
@@ -92,8 +92,8 @@ public class Book {
                 ", name='" + name + '\'' +
                 ", author='" + author + '\'' +
                 ", pages=" + pages +
-                ", imageUrl=" + imageUrl +
-                ", shoryDesc='" + shoryDesc + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", shortDesc='" + shortDesc + '\'' +
                 ", longDesc='" + longDesc + '\'' +
                 '}';
     }
