@@ -1,0 +1,1690 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/.idea/misc.xml	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -8,8 +8,9 @@
+         <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/activity_book.xml" value="0.264" />
+         <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/activity_currently_reading.xml" value="0.1" />
+         <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/activity_favorite.xml" value="0.1" />
+-        <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/activity_main.xml" value="0.264" />
++        <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/activity_main.xml" value="0.4" />
+         <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/activity_want_to_read.xml" value="0.1" />
++        <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/activity_website.xml" value="0.1" />
+         <entry key="..\:/Users/USER/Documents/AndroidStudioTraining/BookLibrary1/app/src/main/res/layout/list_item_book.xml" value="0.2" />
+       </map>
+     </option>
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
++++ b/.idea/vcs.xml	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/build.gradle	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -35,6 +35,7 @@
+     implementation 'com.github.bumptech.glide:glide:4.13.2'
+     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+ 
++    implementation 'com.google.code.gson:gson:2.9.0'
+ 
+     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+     testImplementation 'junit:junit:4.+'
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/AndroidManifest.xml	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -12,6 +12,9 @@
+         android:supportsRtl="true"
+         android:theme="@style/Theme.BookLibrary1">
+         <activity
++            android:name=".WebsiteActivity"
++            android:exported="false" />
++        <activity
+             android:name=".FavoriteActivity"
+             android:exported="false" />
+         <activity
+Index: app/src/main/java/com/example/booklibrary1/AllBooksActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/AllBooksActivity.java b/app/src/main/java/com/example/booklibrary1/AllBooksActivity.java
+--- a/app/src/main/java/com/example/booklibrary1/AllBooksActivity.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/AllBooksActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -1,31 +1,43 @@
+ package com.example.booklibrary1;
+ 
++import androidx.annotation.NonNull;
+ import androidx.appcompat.app.AppCompatActivity;
+-import androidx.recyclerview.widget.GridLayoutManager;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+ 
+ import android.os.Bundle;
+-
+-import java.util.ArrayList;
++import android.view.MenuItem;
+ 
+ public class AllBooksActivity extends AppCompatActivity {
+ 
+     private RecyclerView booksRecView;
+-    private  BookRecViewAdapter adapter;
++    private BookRecViewAdapter adapter;
+ 
+-
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_all_books);
+ 
+-        adapter = new BookRecViewAdapter(this);
+-        booksRecView = findViewById(R.id.booksRecView);
++        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
++
++        adapter = new BookRecViewAdapter(this, "allBooks");
++        booksRecView = findViewById(R.id.bookRecView);
+ 
+         booksRecView.setAdapter(adapter);
+         booksRecView.setLayoutManager(new LinearLayoutManager(this));
+-        adapter.setBooks(Utils.getInstance().getAllBooks());
+ 
++        adapter.setBooks(Utils.getInstance(this).getAllBooks());
++    }
++
++    @Override
++    public boolean onOptionsItemSelected(@NonNull MenuItem item){
++        switch (item.getItemId()){
++            case android.R.id.home:
++                onBackPressed();
++                break;
++            default:
++                break;
++        }
++        return super.onOptionsItemSelected(item);
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/AlreadyReadBookActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/AlreadyReadBookActivity.java b/app/src/main/java/com/example/booklibrary1/AlreadyReadBookActivity.java
+--- a/app/src/main/java/com/example/booklibrary1/AlreadyReadBookActivity.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/AlreadyReadBookActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -14,18 +14,20 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_already_read_book);
+ 
+-        RecyclerView recyclerView = findViewById(R.id.booksRecView);
+-        BookRecViewAdapter adapter = new BookRecViewAdapter(this);
++        RecyclerView recyclerView = findViewById(R.id.bookRecView);
++        BookRecViewAdapter adapter = new BookRecViewAdapter(this, "alreadyRead");
+         recyclerView.setAdapter(adapter);
+         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+ 
+-        adapter.setBooks(Utils.getAlreadyReadBooks());
++
++        adapter.setBooks(Utils.getInstance(this).getAlreadyReadBooks());
+     }
++
+ 
+     @Override
+     public void onBackPressed() {
+-        Intent intent = new Intent(this, MainActivity.class);
+-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
++        Intent intent = new Intent (this, MainActivity.class);
++        intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+         startActivity(intent);
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/Book.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/Book.java b/app/src/main/java/com/example/booklibrary1/Book.java
+--- a/app/src/main/java/com/example/booklibrary1/Book.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/Book.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -6,17 +6,17 @@
+     private String author;
+     private int pages;
+     private String imageUrl;
+-    private String shoryDesc;
++    private String shortDesc;
+     private String longDesc;
+     private boolean isExpanded;
+ 
+-    public Book(int id, String name, String author, int pages, String imageUrl, String shoryDesc, String longDesc) {
++    public Book(int id, String name, String author, int pages, String imageUrl, String shortDesc, String longDesc) {
+         this.id = id;
+         this.name = name;
+         this.author = author;
+         this.pages = pages;
+         this.imageUrl = imageUrl;
+-        this.shoryDesc = shoryDesc;
++        this.shortDesc = shortDesc;
+         this.longDesc = longDesc;
+         isExpanded = false;
+     }
+@@ -69,12 +69,12 @@
+         this.imageUrl = imageUrl;
+     }
+ 
+-    public String getShoryDesc() {
+-        return shoryDesc;
++    public String getShortDesc() {
++        return shortDesc;
+     }
+ 
+-    public void setShoryDesc(String shoryDesc) {
+-        this.shoryDesc = shoryDesc;
++    public void setShortDesc(String shortDesc) {
++        this.shortDesc = shortDesc;
+     }
+ 
+     public String getLongDesc() {
+@@ -92,9 +92,9 @@
+                 ", name='" + name + '\'' +
+                 ", author='" + author + '\'' +
+                 ", pages=" + pages +
+-                ", imageUrl=" + imageUrl +
+-                ", shoryDesc='" + shoryDesc + '\'' +
++                ", imageUrl='" + imageUrl + '\'' +
++                ", shortDesc='" + shortDesc + '\'' +
+                 ", longDesc='" + longDesc + '\'' +
+                 '}';
+     }
+-}
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/BookActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/BookActivity.java b/app/src/main/java/com/example/booklibrary1/BookActivity.java
+--- a/app/src/main/java/com/example/booklibrary1/BookActivity.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/BookActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -19,155 +19,152 @@
+     public static final String BOOK_ID_KEY = "bookId";
+ 
+     private TextView txtBookName, txtAuthor, txtPages, txtDescription;
+-    private Button btnAddToWantRead, btnAddToAlreadyRead, btnAddToCurrentlyReading, btnAddToFavorite;
++    private Button btnAddToWantToRead, btnAddToAlreadyRead, btnAddToCurrentlyReading, btnAddToFavourite;
+     private ImageView bookImage;
+ 
++
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_book);
+ 
+-        initViews();
++        InitViews();
+ 
+-       /* String longDescription = "aaaaaaaaaaaaaaaaaaaaaaaa\n" +
+-                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+-
+-        Book book = new Book(1, " Monstress, Volume Two: The Blood (Book #2 of The Monstress Series)", "Majorie Liu (author) and Sana Takeda (artist)", 1350, "https://www.barnesandnoble.com/blog/wp-content/uploads/2019/05/monstressbookonecover-690x1024-1.jpg",
+-                "the book-cover of the graphic-novel Monstress – Volume Two: The Blood.", longDescription);
+-*/
+         Intent intent = getIntent();
+-        if (null != intent){
++        if(null != intent) {
+             int bookId = intent.getIntExtra(BOOK_ID_KEY, -1);
+-            if (bookId != -1){
+-                Book incomingBook = Utils.getInstance().getBookId(bookId);
+-                if (null != incomingBook){
++            if(bookId != -1) {
++                Book incomingBook = Utils.getInstance(this).getBookById(bookId);
++                if(null != incomingBook) {
+                     setData(incomingBook);
+ 
+                     handleAlreadyRead(incomingBook);
+                     handleWantToReadBooks(incomingBook);
+                     handleCurrentlyReadingBooks(incomingBook);
+-                    handleFavoriteBooks(incomingBook);
++                    handleFavouriteBooks(incomingBook);
+                 }
+             }
+         }
+     }
+ 
+-    private void handleFavoriteBooks(final Book incomingBook) {
+-        ArrayList<Book> favoriteBooks = Utils.getInstance().getFavoriteBooks();
++    private void handleCurrentlyReadingBooks(final Book book) {
++        ArrayList<Book> CurrentlyReadingBooks = Utils.getInstance(this).getCurrentlyReadingBooks();
+ 
+-        boolean existInFavoriteBooks = false;
++        boolean existInCurrentlyReadingBooks = false;
+ 
+-        for (Book b : favoriteBooks){
+-            if (b.getId() == book.getId()){
+-                existInFavoriteBooks = true;
++        for (Book b: CurrentlyReadingBooks){
++            if(b.getId() == book.getId()){
++                existInCurrentlyReadingBooks = true;
+             }
+         }
+-        if (existInFavoriteBooks){ 
+-            btnAddToFavorite.setEnabled(false);
+-        }else {
+-            btnAddToFavorite.setOnClickListener(new View.OnClickListener() {
++        if(existInCurrentlyReadingBooks){
++            btnAddToCurrentlyReading.setEnabled(false);
++        } else {
++            btnAddToCurrentlyReading.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+-                    if (Utils.getInstance().addToFavoriteBooks(book)){
++                    if(Utils.getInstance(BookActivity.this).addToCurrentlyReadingBooks(book)){
+                         Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+-
+-                        Intent intent = new Intent(BookActivity.this, FavoriteActivity.class);
++                        Intent intent = new Intent(BookActivity.this, CurrentlyReadingActivity.class);
+                         startActivity(intent);
+-                    }else{
+-                        Toast.makeText(BookActivity.this, "Something wrong happened try again", Toast.LENGTH_SHORT).show();
++                    } else {
++                        Toast.makeText(BookActivity.this, "Something wrong happened, try again", Toast.LENGTH_SHORT).show();
+                     }
+                 }
+             });
+         }
+-
+     }
+ 
+-    private void handleCurrentlyReadingBooks(final Book incomingBook) {
+-        ArrayList<Book> currentlyReadingBooks = Utils.getInstance().getCurrentlyReadingBooks();
++    private void handleFavouriteBooks(final Book book) {
++        ArrayList<Book> favouriteBooks = Utils.getInstance(this).getFavouriteBooks();
+ 
+-        boolean existInCurrentlyReadingBooks = false;
++        boolean existInFavouriteBooks = false;
+ 
+-        for (Book b : currentlyReadingBooks){
+-            if (b.getId() == book.getId()){
+-                existInCurrentlyReadingBooks = true;
++        for (Book b: favouriteBooks){
++            if(b.getId() == book.getId()){
++                existInFavouriteBooks = true;
+             }
+         }
+-        if (existInCurrentlyReadingBooks){
+-            btnAddToCurrentlyReading.setEnabled(false);
+-        }else {
+-            btnAddToCurrentlyReading.setOnClickListener(new View.OnClickListener() {
++        if(existInFavouriteBooks){
++            btnAddToFavourite.setEnabled(false);
++        } else {
++            btnAddToFavourite.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+-                    if (Utils.getInstance().addToCurrentlyReading(book)){
++                    if(Utils.getInstance(BookActivity.this).addToFavourite(book)){
+                         Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+-
+-                        Intent intent = new Intent(BookActivity.this, CurrentlyReadingActivity.class);
++                        Intent intent = new Intent(BookActivity.this, FavoriteActivity.class);
+                         startActivity(intent);
+-                    }else{
+-                        Toast.makeText(BookActivity.this, "Something wrong happened try again", Toast.LENGTH_SHORT).show();
++                    } else {
++                        Toast.makeText(BookActivity.this, "Something wrong happened, try again", Toast.LENGTH_SHORT).show();
+                     }
+                 }
+             });
+         }
+     }
+ 
+-    private void handleWantToReadBooks(final Book incomingBook) {
+-        ArrayList<Book> wantToReadBooks = Utils.getInstance().getWatToReadBooks();
++    private void handleWantToReadBooks(final Book book) {
++        ArrayList<Book> wantToReadBooks = Utils.getInstance(this).getWantToReadBooks();
+ 
+         boolean existInWantToReadBooks = false;
+ 
+-        for (Book b : wantToReadBooks){
+-            if (b.getId() == book.getId()){
++        for (Book b: wantToReadBooks){
++            if(b.getId() == book.getId()){
+                 existInWantToReadBooks = true;
+             }
+         }
+-        if (existInWantToReadBooks){
+-            btnAddToWantRead.setEnabled(false);
+-        }else {
+-            btnAddToWantRead.setOnClickListener(new View.OnClickListener() {
++
++        if(existInWantToReadBooks){
++            btnAddToWantToRead.setEnabled(false);
++        } else {
++            btnAddToWantToRead.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+-                    if (Utils.getInstance().addToWantToRead(book)){
++                    if(Utils.getInstance(BookActivity.this).addToWantToRead(book)){
+                         Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+-
+                         Intent intent = new Intent(BookActivity.this, WantToReadActivity.class);
+                         startActivity(intent);
+-                    }else{
+-                        Toast.makeText(BookActivity.this, "Something wrong happened try again", Toast.LENGTH_SHORT).show();
++                    } else {
++                        Toast.makeText(BookActivity.this, "Something wrong happened, try again", Toast.LENGTH_SHORT).show();
+                     }
+                 }
+             });
+         }
+     }
+ 
+-
++    /**
++     * Enable and disable button,
++     * Add the book to Already Read Book Arraylist
++     * @param book
++     */
+     private void handleAlreadyRead(final Book book) {
+-        ArrayList<Book> alreadyReadBooks = Utils.getInstance().getAlreadyReadBooks();
++        ArrayList<Book> alreadyReadBooks = Utils.getInstance(this).getAlreadyReadBooks();
+ 
+         boolean existInAlreadyReadBooks = false;
+ 
+-        for (Book b : alreadyReadBooks){
+-            if (b.getId() == book.getId()){
++
++        for (Book b: alreadyReadBooks){
++            if(b.getId() == book.getId()){
+                 existInAlreadyReadBooks = true;
+             }
+         }
+-        if (existInAlreadyReadBooks){
++        if(existInAlreadyReadBooks){
+             btnAddToAlreadyRead.setEnabled(false);
+-        }else {
++        } else {
+             btnAddToAlreadyRead.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+-                    if (Utils.getInstance().addToFavoriteBooks(book)){
++                    if(Utils.getInstance(BookActivity.this).addToAlreadyRead(book)){
+                         Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+-
+                         Intent intent = new Intent(BookActivity.this, AlreadyReadBookActivity.class);
+                         startActivity(intent);
+-                    }else{
+-                        Toast.makeText(BookActivity.this, "Something wrong happened try again", Toast.LENGTH_SHORT).show();
++                    } else {
++                        Toast.makeText(BookActivity.this, "Something wrong happened, try again", Toast.LENGTH_SHORT).show();
+                     }
+                 }
+             });
+         }
++
+     }
+ 
+     private void setData(Book book) {
+@@ -175,23 +172,21 @@
+         txtAuthor.setText(book.getAuthor());
+         txtPages.setText(String.valueOf(book.getPages()));
+         txtDescription.setText(book.getLongDesc());
+-        Glide.with(this)
+-                .asBitmap().load(book.getImageUrl())
+-                .into(bookImage);
++        Glide.with(this).asBitmap().load(book.getImageUrl()).into(bookImage);
+     }
+ 
+-    private void initViews() {
+-        txtAuthor = findViewById(R.id.txtAuthor);
++    private void InitViews(){
++        txtAuthor = findViewById(R.id.txtAuthorName);
+         txtBookName = findViewById(R.id.txtBookName);
+         txtPages = findViewById(R.id.txtPages);
+         txtDescription = findViewById(R.id.txtDescription);
+ 
+         btnAddToAlreadyRead = findViewById(R.id.btnAddToAlreadyReadList);
+         btnAddToCurrentlyReading = findViewById(R.id.btnAddToCurrentlyReading);
+-        btnAddToFavorite = findViewById(R.id.btnAddToFavorite);
+-        btnAddToWantRead = findViewById(R.id.btnAddToWantToReadList);
++        btnAddToFavourite = findViewById(R.id.btnAddToFavourite);
++        btnAddToWantToRead = findViewById(R.id.btnAddToWantToReadList);
+ 
+         bookImage = findViewById(R.id.imgBook);
+-
+     }
++
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/BookRecViewAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/BookRecViewAdapter.java b/app/src/main/java/com/example/booklibrary1/BookRecViewAdapter.java
+--- a/app/src/main/java/com/example/booklibrary1/BookRecViewAdapter.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/BookRecViewAdapter.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -2,8 +2,11 @@
+ 
+ import static com.example.booklibrary1.BookActivity.BOOK_ID_KEY;
+ 
++import android.app.AlertDialog;
+ import android.content.Context;
++import android.content.DialogInterface;
+ import android.content.Intent;
++import android.transition.Transition;
+ import android.transition.TransitionManager;
+ import android.util.Log;
+ import android.view.LayoutInflater;
+@@ -22,23 +25,27 @@
+ 
+ import java.util.ArrayList;
+ 
+-public class BookRecViewAdapter extends RecyclerView.Adapter<BookRecViewAdapter.ViewHolder>{
++
++public class BookRecViewAdapter extends RecyclerView.Adapter<BookRecViewAdapter.ViewHolder> {
++
+     private static final String TAG = "BookRecViewAdapter";
+ 
+     private ArrayList<Book> books = new ArrayList<>();
+     private Context mContext;
++    private String parentActivity;
+ 
+-    public BookRecViewAdapter(Context mContext) {
++
++    public BookRecViewAdapter(Context mContext, String parentActivity) {
+         this.mContext = mContext;
++        this.parentActivity = parentActivity;
+     }
+-
+-
+ 
+     @NonNull
+     @Override
+     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
++        //Create the instance of view holder and return it
+         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_book, parent, false);
+-
++        ViewHolder holder = new ViewHolder(view);
+         return new ViewHolder(view);
+     }
+ 
+@@ -46,28 +53,133 @@
+     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+         Log.d(TAG, "onBindViewHolder: Called");
+         holder.txtName.setText(books.get(position).getName());
+-        Glide.with(mContext)
+-                .asBitmap()
+-                .load(books.get(position).getImageUrl())
+-                .into(holder.imgBook);
++
++        Glide.with(mContext).asBitmap().load(books.get(position).getImageUrl()).into(holder.imgBook);
+ 
+         holder.parent.setOnClickListener(new View.OnClickListener() {
+             @Override
+-            public void onClick(View v) {
++            public void onClick(View view) {
+                 Intent intent = new Intent(mContext, BookActivity.class);
+                 intent.putExtra(BOOK_ID_KEY, books.get(position).getId());
+                 mContext.startActivity(intent);
+             }
+         });
+ 
++
++
+         holder.txtAuthor.setText(books.get(position).getAuthor());
+-        holder.txtDescription.setText(books.get(position).getShoryDesc());
++        holder.txtDescription.setText(books.get(position).getShortDesc());
+ 
+         if (books.get(position).isExpanded()){
++
+             TransitionManager.beginDelayedTransition(holder.parent);
+             holder.expandedRelLayout.setVisibility(View.VISIBLE);
+             holder.downArrow.setVisibility(View.GONE);
+-        }else{
++
++            if (parentActivity.equals("allBooks")){
++                holder.btnDelete.setVisibility(View.GONE);
++            } else if (parentActivity.equals("alreadyRead")){
++                holder.btnDelete.setVisibility(View.VISIBLE);
++                holder.btnDelete.setOnClickListener(new View.OnClickListener(){
++                    @Override
++                    public void onClick(View view) {
++                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
++                        builder.setMessage("Are you sure you want to delete this book " + books.get(position).getName() + "?");
++                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++                                if (Utils.getInstance(mContext).removeFromAlreadyRead(books.get(position))) {
++                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
++                                    notifyDataSetChanged();
++                                }
++                            }
++                        });
++                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++
++                            }
++                        });
++                        builder.create().show(); //Show your builder.
++                    }
++                });
++            } else if (parentActivity.equals("favouriteBooks")){
++                holder.btnDelete.setVisibility(View.VISIBLE);
++                holder.btnDelete.setOnClickListener(new View.OnClickListener(){
++                    @Override
++                    public void onClick(View view) {
++                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
++                        builder.setMessage("Are you sure you want to delete this book " + books.get(position).getName() + "?");
++                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++                                if (Utils.getInstance(mContext).removeFromFavourites(books.get(position))) {
++                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
++                                    notifyDataSetChanged();
++                                }
++                            }
++                        });
++                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++                            }
++                        });
++                        builder.create().show(); //Show your builder.
++                    }
++                });
++            } else if (parentActivity.equals("currentlyReading")){
++                holder.btnDelete.setVisibility(View.VISIBLE);
++                holder.btnDelete.setOnClickListener(new View.OnClickListener(){
++                    @Override
++                    public void onClick(View view) {
++                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
++                        builder.setMessage("Are you sure you want to delete this book " + books.get(position).getName() + "?");
++                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++                                if (Utils.getInstance(mContext).removeFromCurrentlyReading(books.get(position))) {
++                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
++                                    notifyDataSetChanged();
++                                }
++                            }
++                        });
++                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++
++                            }
++                        });
++
++                        builder.create().show(); //Show your builder.
++                    }
++                });
++            } else if (parentActivity.equals("wantToRead")){
++                holder.btnDelete.setVisibility(View.VISIBLE);
++                holder.btnDelete.setOnClickListener(new View.OnClickListener(){
++                    @Override
++                    public void onClick(View view) {
++                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
++                        builder.setMessage("Are you sure you want to delete this book " + books.get(position).getName() + "?");
++                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++                                if (Utils.getInstance(mContext).removeFromWantToRead(books.get(position))) {
++                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
++                                    notifyDataSetChanged();
++                                }
++                            }
++                        });
++                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
++                            @Override
++                            public void onClick(DialogInterface dialog, int which) {
++                            }
++                        });
++                        builder.create().show(); //Show your builder.
++                    }
++                });
++            }
++
++        }  else {
+             TransitionManager.beginDelayedTransition(holder.parent);
+             holder.expandedRelLayout.setVisibility(View.GONE);
+             holder.downArrow.setVisibility(View.VISIBLE);
+@@ -77,10 +189,9 @@
+     @Override
+     public int getItemCount() {
+         return books.size();
+-
+     }
+ 
+-    public void setBooks(ArrayList<Book> books) {
++    public void setBooks(ArrayList<Book> books){
+         this.books = books;
+         notifyDataSetChanged();
+     }
+@@ -94,6 +205,7 @@
+         private RelativeLayout expandedRelLayout;
+         private TextView txtAuthor, txtDescription;
+ 
++        private TextView btnDelete;
+ 
+         public ViewHolder(@NonNull View itemView) {
+             super(itemView);
+@@ -105,8 +217,9 @@
+             upArrow = itemView.findViewById(R.id.btnUpArrow);
+             expandedRelLayout = itemView.findViewById(R.id.expandedRelLayout);
+             txtAuthor = itemView.findViewById(R.id.txtAuthor);
+-            txtDescription = itemView.findViewById(R.id.txtShortDesc);
++            txtDescription = itemView.findViewById(R.id.txtShortdesc);
+ 
++            btnDelete = itemView.findViewById(R.id.btnDelete);
+ 
+             downArrow.setOnClickListener(new View.OnClickListener() {
+                 @Override
+@@ -126,8 +239,6 @@
+                 }
+             });
+ 
+-
+         }
+     }
+-
+-}
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/CurrentlyReadingActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/CurrentlyReadingActivity.java b/app/src/main/java/com/example/booklibrary1/CurrentlyReadingActivity.java
+--- a/app/src/main/java/com/example/booklibrary1/CurrentlyReadingActivity.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/CurrentlyReadingActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -14,19 +14,19 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_currently_reading);
+ 
+-        RecyclerView recyclerView = findViewById(R.id.booksRecView);
+-        BookRecViewAdapter adapter = new BookRecViewAdapter(this);
++        RecyclerView recyclerView = findViewById(R.id.bookRecView);
++        BookRecViewAdapter adapter = new BookRecViewAdapter(this, "currentlyReading");
+         recyclerView.setAdapter(adapter);
+         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+ 
+-        adapter.setBooks(Utils.getWatToReadBooks());
+ 
++        adapter.setBooks(Utils.getInstance(this).getCurrentlyReadingBooks());
+     }
++
+     @Override
+     public void onBackPressed() {
+-        Intent intent = new Intent(this, MainActivity.class);
+-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
++        Intent intent = new Intent (this, MainActivity.class);
++        intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+         startActivity(intent);
+     }
+ }
+-
+Index: app/src/main/java/com/example/booklibrary1/FavoriteActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/FavoriteActivity.java b/app/src/main/java/com/example/booklibrary1/FavoriteActivity.java
+--- a/app/src/main/java/com/example/booklibrary1/FavoriteActivity.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/FavoriteActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -1,5 +1,4 @@
+ package com.example.booklibrary1;
+-
+ import androidx.appcompat.app.AppCompatActivity;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+@@ -14,21 +13,21 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_favorite);
+ 
+-        RecyclerView recyclerView = findViewById(R.id.booksRecView);
+-        BookRecViewAdapter adapter = new BookRecViewAdapter(this);
++        RecyclerView recyclerView = findViewById(R.id.bookRecView);
++
++        BookRecViewAdapter adapter = new BookRecViewAdapter(this, "favouriteBooks");
+         recyclerView.setAdapter(adapter);
+         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+ 
+-        adapter.setBooks(Utils.getFavoriteBooks());
+ 
++        adapter.setBooks(Utils.getInstance(this).getFavouriteBooks());
+     }
++
+     @Override
+     public void onBackPressed() {
+-        Intent intent = new Intent(this, MainActivity.class);
+-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
++        Intent intent = new Intent (this, MainActivity.class);
++
++        intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+         startActivity(intent);
+     }
+-}
+-
+-
+-
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/MainActivity.java b/app/src/main/java/com/example/booklibrary1/MainActivity.java
+--- a/app/src/main/java/com/example/booklibrary1/MainActivity.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/MainActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -1,7 +1,9 @@
+ package com.example.booklibrary1;
+ 
++import androidx.appcompat.app.AlertDialog;
+ import androidx.appcompat.app.AppCompatActivity;
+ 
++import android.content.DialogInterface;
+ import android.content.Intent;
+ import android.os.Bundle;
+ import android.view.View;
+@@ -9,7 +11,7 @@
+ 
+ public class MainActivity extends AppCompatActivity {
+ 
+-    private Button btnAllBooks, btnAlreadyRead, btnWantToRead, btnCurrentlyReading, btnFavorite, btnAbout;
++    private Button btnAllBooks, btnAlreadyRead, btnWantToRead, btnCurrentlyReading, btnFavourite, btnAbout;
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -25,6 +27,7 @@
+                 startActivity(intent);
+             }
+         });
++
+         btnAlreadyRead.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+@@ -33,16 +36,65 @@
+             }
+         });
+ 
+-        Utils.getInstance();
++        btnFavourite.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View view) {
++                Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
++                startActivity(intent);
++            }
++        });
++
++        btnCurrentlyReading.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View view) {
++                Intent intent = new Intent(MainActivity.this, CurrentlyReadingActivity.class);
++                startActivity(intent);
++            }
++        });
++
++        btnWantToRead.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View view) {
++                Intent intent = new Intent(MainActivity.this, WantToReadActivity.class);
++                startActivity(intent);
++            }
++        });
++
++        btnAbout.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View view) {
++                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
++                builder.setTitle(getString(R.string.app_name));
++                builder.setMessage("This is my attempt to cope and fully understand the way of android app creation");
++                builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
++                    @Override
++                    public void onClick(DialogInterface dialog, int which) {
++
++                    }
++                });
++
++                builder.setPositiveButton("Visit", new DialogInterface.OnClickListener() {
++                    @Override
++                    public void onClick(DialogInterface dialog, int which) {
++                        //TODO: show the website
++                        Intent intent = new Intent(MainActivity.this, WebsiteActivity.class);
++                        intent.putExtra("url", "https://google.com");
++                        startActivity(intent);
++                    }
++                });
++                builder.create().show();
++            }
++        });
++
++        Utils.getInstance(this); //Singletone realisation
+     }
+ 
+-    private void initViews() {
++    private void initViews(){
+         btnAllBooks = findViewById(R.id.btnAllBooks);
+         btnAlreadyRead = findViewById(R.id.btnAlreadyRead);
+         btnWantToRead = findViewById(R.id.btnWantToRead);
+         btnCurrentlyReading = findViewById(R.id.btnCurrentlyReading);
+-        btnFavorite = findViewById(R.id.btnFavorite);
++        btnFavourite = findViewById(R.id.btnFavorite);
+         btnAbout = findViewById(R.id.btnAbout);
+-
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/Utils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/Utils.java b/app/src/main/java/com/example/booklibrary1/Utils.java
+--- a/app/src/main/java/com/example/booklibrary1/Utils.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/Utils.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -1,97 +1,272 @@
+ package com.example.booklibrary1;
+ 
++import android.content.Context;
++import android.content.SharedPreferences;
++
++import com.google.gson.Gson;
++import com.google.gson.reflect.TypeToken;
++
++import java.lang.reflect.Type;
+ import java.util.ArrayList;
+ 
++
+ public class Utils {
+ 
++    private static final String ALL_BOOKS_KEY = "all_books";
++    private static final String ALREADY_READ_BOOKS = "already_read_books";
++    private static final String WANT_TO_READ_BOOKS = "want_to_read_books";
++    private static final String CURRENTLY_READING_BOOKS = "currently_reading_books";
++    private static final String FAVOURITE_BOOKS = "favourite_books";
++
+     private static Utils instance;
++    private SharedPreferences sharedPreferences;
+ 
++    /*
+     private static ArrayList<Book> allBooks;
+     private static ArrayList<Book> alreadyReadBooks;
+-    private static ArrayList<Book> watToReadBooks;
++    private static ArrayList<Book> wantToReadBooks;
+     private static ArrayList<Book> currentlyReadingBooks;
+-    private static ArrayList<Book> favoriteBooks;
++    private static ArrayList<Book> favouriteBooks;
++    */
++
+ 
+-    private Utils() {
+-        if (null == allBooks) {
+-            allBooks = new ArrayList<>();
++    private Utils(Context context) {
++
++        sharedPreferences = context.getSharedPreferences("alternate_db", Context.MODE_PRIVATE);
++
++        if(null == getAllBooks()){
+             initData();
+         }
+-        if (null == alreadyReadBooks) {
+-            alreadyReadBooks = new ArrayList<>();
+-        }
+-        if (null == watToReadBooks) {
+-            watToReadBooks = new ArrayList<>();
++
++        SharedPreferences.Editor editor = sharedPreferences.edit();
++        Gson gson = new Gson();
++
++        if(null == getAlreadyReadBooks()) {
++            editor.putString(ALREADY_READ_BOOKS, gson.toJson(new ArrayList<Book>()));
++            editor.commit();
+         }
+-        if (null == currentlyReadingBooks) {
+-            currentlyReadingBooks = new ArrayList<>();
++
++        if(null == getWantToReadBooks()) {
++            editor.putString(WANT_TO_READ_BOOKS, gson.toJson(new ArrayList<Book>()));
++            editor.commit();
+         }
+-        if (null == favoriteBooks) {
+-            favoriteBooks = new ArrayList<>();
++
++        if(null == getCurrentlyReadingBooks()) {
++            editor.putString(CURRENTLY_READING_BOOKS, gson.toJson(new ArrayList<Book>()));
++            editor.commit();
+         }
+ 
++        if(null == getFavouriteBooks()) {
++            editor.putString(FAVOURITE_BOOKS, gson.toJson(new ArrayList<Book>()));
++            editor.commit();
++        }
+     }
+ 
+     private void initData() {
++        //TODO: add initial data
+ 
+-        allBooks.add(new Book(1, " Monstress, Volume Two: The Blood (Book #2 of The Monstress Series)", "Majorie Liu (author) and Sana Takeda (artist)", 1350, "https://www.barnesandnoble.com/blog/wp-content/uploads/2019/05/monstressbookonecover-690x1024-1.jpg",
+-                "the book-cover of the graphic-novel Monstress – Volume Two: The Blood.", "Long Desc"));
+-        allBooks.add(new Book(2, "Locke & Key, Vol. 1", "dhsidhnzs sdsh" +
+-                "Joe Hill", 452, "https://images-na.ssl-images-amazon.com/images/I/81Ix49xdzSL.jpg",
+-                " \"modern masterpiece\" by The A.V. Club, Locke & Key tells a sprawling tale of magic and family, legacy and grief, good and evil.", "Long Desc"));
++        ArrayList<Book> books = new ArrayList<>();
+ 
++        books.add(new Book(1, "1Q84", "Haruki Murakami", 1350, "https://m.media-amazon.com/images/I/417qN9YA3QL._SY346_.jpg", "A work of maddening", "Long Description"));
++        books.add(new Book(2,"The Myth of Sisyphus", "Albert Camus", 250, "https://images-na.ssl-images-amazon.com/images/I/41LQWTh9bWL._SX322_BO1,204,203,200_.jpg", "Absurd philosophy", "Some description"));
+ 
++        SharedPreferences.Editor editor = sharedPreferences.edit();
++        Gson gson = new Gson();
++        //String text = gson.toJson(books);
++        editor.putString(ALL_BOOKS_KEY,gson.toJson(books));
++        editor.commit();
+     }
+ 
+-    public static Utils getInstance() {
+-        if (null != instance) {
++    public static Utils getInstance(Context context) {
++        if (null!=instance){
+             return instance;
+-        } else {
+-            instance = new Utils();
++        }
++        else{
++            instance = new Utils(context);
+             return instance;
+         }
+     }
+ 
+-    public static ArrayList<Book> getAllBooks() {
+-        return allBooks;
++    public ArrayList<Book> getAllBooks() {
++        Gson gson = new Gson();
++        Type type = new TypeToken<ArrayList<Book>>(){}.getType();
++        ArrayList<Book> books = gson.fromJson(sharedPreferences.getString(ALL_BOOKS_KEY, null), type);
++        return books;
+     }
+ 
+-    public static ArrayList<Book> getAlreadyReadBooks() {
+-        return alreadyReadBooks;
++    public ArrayList<Book> getAlreadyReadBooks() {
++        Gson gson = new Gson();
++        Type type = new TypeToken<ArrayList<Book>>(){}.getType();
++        ArrayList<Book> books = gson.fromJson(sharedPreferences.getString(ALREADY_READ_BOOKS, null), type);
++        return books;
+     }
+ 
+-    public static ArrayList<Book> getWatToReadBooks() {
+-        return watToReadBooks;
++    public ArrayList<Book> getWantToReadBooks() {
++        Gson gson = new Gson();
++        Type type = new TypeToken<ArrayList<Book>>(){}.getType();
++        ArrayList<Book> books = gson.fromJson(sharedPreferences.getString(WANT_TO_READ_BOOKS, null), type);
++        return books;
+     }
+ 
+-    public static ArrayList<Book> getCurrentlyReadingBooks() {
+-        return currentlyReadingBooks;
++    public ArrayList<Book> getCurrentlyReadingBooks() {
++        Gson gson = new Gson();
++        Type type = new TypeToken<ArrayList<Book>>(){}.getType();
++        ArrayList<Book> books = gson.fromJson(sharedPreferences.getString(CURRENTLY_READING_BOOKS, null), type);
++        return books;
+     }
+ 
+-    public static ArrayList<Book> getFavoriteBooks() {
+-        return favoriteBooks;
++    public ArrayList<Book> getFavouriteBooks() {
++        Gson gson = new Gson();
++        Type type = new TypeToken<ArrayList<Book>>(){}.getType();
++        ArrayList<Book> books = gson.fromJson(sharedPreferences.getString(FAVOURITE_BOOKS, null), type);
++        return books;
+     }
+ 
+-    public Book getBookId(int id) {
+-        for (Book b : allBooks) {
+-            if (b.getId() == id) {
+-                return b;
++    public Book getBookById(int id){
++        ArrayList<Book> books = getAllBooks();
++        if(null!=books){
++            for (Book b: books){
++                if (b.getId()==id){
++                    return b;
++                }
+             }
+         }
+         return null;
+     }
+ 
+-    public boolean addToAlreadyRead(Book book) {
+-        return alreadyReadBooks.add(book);
++    public boolean addToAlreadyRead(Book book){
++        ArrayList<Book> books = getAlreadyReadBooks();
++        if(null!=books){
++            if(books.add(book)){
++                Gson gson = new Gson();
++                SharedPreferences.Editor editor = sharedPreferences.edit();
++                editor.remove(ALREADY_READ_BOOKS);
++                editor.putString(ALREADY_READ_BOOKS, gson.toJson(books));
++                editor.commit();
++                return true;
++            }
++        }
++        return false;
+     }
+ 
+-    public boolean addToWantToRead(Book book) {
+-        return alreadyReadBooks.add(book);
+-    }
+-    public boolean addToCurrentlyReading(Book book) {
+-        return currentlyReadingBooks.add(book);
+-    }
+-    public boolean addToFavorite(Book book) {
+-        return favoriteBooks.add(book);
++    public boolean addToWantToRead(Book book){
++        ArrayList<Book> books = getWantToReadBooks();
++        if(null!=books){
++            if(books.add(book)){
++                Gson gson = new Gson();
++                SharedPreferences.Editor editor = sharedPreferences.edit();
++                editor.remove(WANT_TO_READ_BOOKS);
++                editor.putString(WANT_TO_READ_BOOKS, gson.toJson(books));
++                editor.commit();
++                return true;
++            }
++        }
++        return false;
+     }
+-}
++
++    public boolean addToFavourite(Book book){
++        ArrayList<Book> books = getFavouriteBooks();
++        if(null!=books){
++            if(books.add(book)){
++                Gson gson = new Gson();
++                SharedPreferences.Editor editor = sharedPreferences.edit();
++                editor.remove(FAVOURITE_BOOKS);
++                editor.putString(FAVOURITE_BOOKS, gson.toJson(books));
++                editor.commit();
++                return true;
++            }
++        }
++        return false;
++    }
++
++    public boolean addToCurrentlyReadingBooks(Book book){
++        ArrayList<Book> books = getCurrentlyReadingBooks();
++        if(null!=books){
++            if(books.add(book)){
++                Gson gson = new Gson();
++                SharedPreferences.Editor editor = sharedPreferences.edit();
++                editor.remove(CURRENTLY_READING_BOOKS);
++                editor.putString(CURRENTLY_READING_BOOKS, gson.toJson(books));
++                editor.commit();
++                return true;
++            }
++        }
++        return false;
++    }
++
++    public boolean removeFromAlreadyRead (Book book){
++        ArrayList<Book> books = getAlreadyReadBooks();
++        if(null != books) {
++            for(Book b: books) {
++                if(b.getId()==book.getId()){
++                    if(books.remove(b)){
++                        Gson gson = new Gson();
++                        SharedPreferences.Editor editor = sharedPreferences.edit();
++                        editor.remove(ALREADY_READ_BOOKS);
++                        editor.putString(ALREADY_READ_BOOKS, gson.toJson(books));
++                        editor.commit();
++                        return true;
++                    }
++                }
++            }
++        }
++        return false;
++    }
++
++    public boolean removeFromWantToRead (Book book){
++        ArrayList<Book> books = getFavouriteBooks();
++        if(null != books) {
++            for(Book b: books) {
++                if(b.getId()==book.getId()){
++                    if(books.remove(b)){
++                        Gson gson = new Gson();
++                        SharedPreferences.Editor editor = sharedPreferences.edit();
++                        editor.remove(FAVOURITE_BOOKS);
++                        editor.putString(FAVOURITE_BOOKS, gson.toJson(books));
++                        editor.commit();
++                        return true;
++                    }
++                }
++            }
++        }
++        return false;
++    }
++
++    public boolean removeFromCurrentlyReading (Book book){
++        ArrayList<Book> books = getCurrentlyReadingBooks();
++        if(null != books) {
++            for(Book b: books) {
++                if(b.getId()==book.getId()){
++                    if(books.remove(b)){
++                        Gson gson = new Gson();
++                        SharedPreferences.Editor editor = sharedPreferences.edit();
++                        editor.remove(CURRENTLY_READING_BOOKS);
++                        editor.putString(CURRENTLY_READING_BOOKS, gson.toJson(books));
++                        editor.commit();
++                        return true;
++                    }
++                }
++            }
++        }
++        return false;
++    }
++
++    public boolean removeFromFavourites (Book book){
++        ArrayList<Book> books = getFavouriteBooks();
++        if(null != books) {
++            for(Book b: books) {
++                if(b.getId()==book.getId()){
++                    if(books.remove(b)){
++                        Gson gson = new Gson();
++                        SharedPreferences.Editor editor = sharedPreferences.edit();
++                        editor.remove(FAVOURITE_BOOKS);
++                        editor.putString(FAVOURITE_BOOKS, gson.toJson(books));
++                        editor.commit();
++                        return true;
++                    }
++                }
++            }
++        }
++        return false;
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/WantToReadActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/WantToReadActivity.java b/app/src/main/java/com/example/booklibrary1/WantToReadActivity.java
+--- a/app/src/main/java/com/example/booklibrary1/WantToReadActivity.java	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/java/com/example/booklibrary1/WantToReadActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -14,18 +14,19 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_want_to_read);
+ 
+-        RecyclerView recyclerView = findViewById(R.id.booksRecView);
+-        BookRecViewAdapter adapter = new BookRecViewAdapter(this);
++        RecyclerView recyclerView = findViewById(R.id.bookRecView);
++        BookRecViewAdapter adapter = new BookRecViewAdapter(this, "wantToRead");
+         recyclerView.setAdapter(adapter);
+         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+ 
+-        adapter.setBooks(Utils.getWatToReadBooks());
+-
++        //adapter.setBooks(Utils.getInstance().getAlreadyReadBooks());
++        adapter.setBooks(Utils.getInstance(this).getWantToReadBooks());
+     }
++
+     @Override
+     public void onBackPressed() {
+-        Intent intent = new Intent(this, MainActivity.class);
+-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
++        Intent intent = new Intent (this, MainActivity.class);
++        intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+         startActivity(intent);
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/booklibrary1/WebsiteActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/booklibrary1/WebsiteActivity.java b/app/src/main/java/com/example/booklibrary1/WebsiteActivity.java
+new file mode 100644
+--- /dev/null	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
++++ b/app/src/main/java/com/example/booklibrary1/WebsiteActivity.java	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -0,0 +1,40 @@
++package com.example.booklibrary1;
++
++import androidx.appcompat.app.AppCompatActivity;
++
++import android.content.Intent;
++import android.os.Bundle;
++import android.webkit.WebSettings;
++import android.webkit.WebView;
++import android.webkit.WebViewClient;
++
++public class WebsiteActivity extends AppCompatActivity {
++
++    private WebView webView;
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_website);
++
++        Intent intent = getIntent();
++        if (null != intent) {
++            String url = intent.getStringExtra("url");
++            webView = findViewById(R.id.webViewer);
++            webView.loadUrl(url);
++            webView.setWebViewClient(new WebViewClient());
++            webView.getSettings().setJavaScriptEnabled(true);
++        }
++
++
++    }
++
++    @Override
++    public void onBackPressed(){
++        if(webView.canGoBack()){
++            webView.goBack();
++        } else {
++            super.onBackPressed();
++        }
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_book.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_book.xml b/app/src/main/res/layout/activity_book.xml
+--- a/app/src/main/res/layout/activity_book.xml	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/res/layout/activity_book.xml	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -16,156 +16,159 @@
+ 
+             <ImageView
+                 android:id="@+id/imgBook"
+-                android:layout_width="150dp"
+-                android:layout_height="150dp"
++                android:layout_width="200dp"
++                android:layout_height="200dp"
+                 android:layout_marginTop="50dp"
+-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+-                app:layout_constraintHorizontal_bias="0.596"
++                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toTopOf="parent"
+                 tools:srcCompat="@tools:sample/avatars" />
+ 
+             <Button
+-                android:id="@+id/btnAddToCurrentlyReading"
++                android:id="@+id/btnAddToAlreadyReadList"
+                 android:layout_width="170dp"
+                 android:layout_height="wrap_content"
+-                android:layout_marginTop="50dp"
+-                android:text="Currently Reading"
++                android:layout_marginTop="24dp"
++                android:text="Already Read"
++                android:textAllCaps="false"
+                 app:layout_constraintEnd_toEndOf="parent"
+-                app:layout_constraintStart_toStartOf="@+id/guideline2"
+-                app:layout_constraintTop_toTopOf="parent" />
++                app:layout_constraintStart_toStartOf="@+id/guideline"
++                app:layout_constraintTop_toBottomOf="@+id/btnAddToWantToReadList" />
+ 
+             <Button
+                 android:id="@+id/btnAddToWantToReadList"
+                 android:layout_width="170dp"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="24dp"
+-                android:text="Want to Read"
++                android:layout_marginEnd="12dp"
++                android:text="Want To Read"
++                android:textAllCaps="false"
+                 app:layout_constraintEnd_toEndOf="parent"
+-                app:layout_constraintStart_toStartOf="@+id/guideline2"
++                app:layout_constraintStart_toStartOf="@+id/guideline"
+                 app:layout_constraintTop_toBottomOf="@+id/btnAddToCurrentlyReading" />
+ 
+             <Button
+-                android:id="@+id/btnAddToAlreadyReadList"
++                android:id="@+id/btnAddToCurrentlyReading"
+                 android:layout_width="170dp"
+                 android:layout_height="wrap_content"
+-                android:layout_marginTop="24dp"
+-                android:text="Already Read"
++                android:layout_marginTop="50dp"
++                android:text="Currently Reading"
++                android:textAllCaps="false"
+                 app:layout_constraintEnd_toEndOf="parent"
+-                app:layout_constraintStart_toStartOf="@+id/guideline2"
+-                app:layout_constraintTop_toBottomOf="@+id/btnAddToWantToReadList" />
++                app:layout_constraintStart_toStartOf="@+id/guideline"
++                app:layout_constraintTop_toTopOf="parent" />
+ 
+             <Button
+-                android:id="@+id/btnAddToFavorite"
++                android:id="@+id/btnAddToFavourite"
+                 android:layout_width="170dp"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="24dp"
+-                android:text="Add To Favorites"
++                android:text="Add To Favourites"
++                android:textAllCaps="false"
+                 app:layout_constraintEnd_toEndOf="parent"
+-                app:layout_constraintStart_toStartOf="@+id/guideline2"
++                app:layout_constraintStart_toStartOf="@+id/guideline"
+                 app:layout_constraintTop_toBottomOf="@+id/btnAddToAlreadyReadList" />
+ 
+-            <androidx.constraintlayout.widget.Guideline
+-                android:id="@+id/guideline2"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:orientation="vertical"
+-                app:layout_constraintGuide_begin="185dp" />
+-
+-            <TextView
+-                android:id="@+id/txtDescription"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:layout_marginTop="24dp"
+-                android:text="Long Description"
+-                app:layout_constraintStart_toStartOf="@+id/guideline4"
+-                app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+-
+             <TextView
+                 android:id="@+id/nameText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:layout_marginTop="24dp"
+                 android:text="Book Name"
+-                app:layout_constraintStart_toStartOf="@+id/guideline4"
+-                app:layout_constraintTop_toTopOf="@+id/guideline3" />
++                app:layout_constraintStart_toStartOf="@+id/guideline3"
++                app:layout_constraintTop_toTopOf="@+id/guideline2" />
+ 
+             <TextView
+                 android:id="@+id/txtBookName"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:text="The Mysiou"
+-                app:layout_constraintBottom_toBottomOf="@+id/nameText"
+-                app:layout_constraintStart_toStartOf="@+id/guideline5"
++                android:text="The Mysterious"
++                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                 app:layout_constraintTop_toTopOf="@+id/nameText" />
+ 
+             <TextView
+-                android:id="@+id/Author"
++                android:id="@+id/authorText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:layout_marginTop="24dp"
++                android:layout_marginTop="8dp"
+                 android:text="Author"
+-                app:layout_constraintStart_toStartOf="@+id/guideline4"
++                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                 app:layout_constraintTop_toBottomOf="@+id/nameText" />
+ 
+             <TextView
+-                android:id="@+id/authorText"
++                android:id="@+id/txtAuthorName"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:text="Meisam"
+-                app:layout_constraintBottom_toBottomOf="@+id/Author"
+-                app:layout_constraintStart_toStartOf="@+id/guideline5"
+-                app:layout_constraintTop_toTopOf="@+id/Author" />
++                android:layout_marginTop="8dp"
++                android:text="Oleg"
++                app:layout_constraintStart_toStartOf="@+id/guideline4"
++                app:layout_constraintTop_toBottomOf="@+id/txtBookName" />
+ 
+             <TextView
+-                android:id="@+id/pageText"
++                android:id="@+id/pagesText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:layout_marginTop="24dp"
+-                android:text="pages"
+-                app:layout_constraintStart_toStartOf="@+id/guideline4"
+-                app:layout_constraintTop_toBottomOf="@+id/Author" />
++                android:layout_marginTop="8dp"
++                android:text="Pages"
++                app:layout_constraintStart_toStartOf="@+id/guideline3"
++                app:layout_constraintTop_toBottomOf="@+id/authorText" />
+ 
+             <TextView
+                 android:id="@+id/txtPages"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
++                android:layout_marginTop="8dp"
+                 android:text="150"
+-                app:layout_constraintBottom_toBottomOf="@+id/pageText"
+-                app:layout_constraintStart_toStartOf="@+id/guideline5"
+-                app:layout_constraintTop_toTopOf="@+id/pageText" />
++                app:layout_constraintStart_toStartOf="@+id/guideline4"
++                app:layout_constraintTop_toBottomOf="@+id/txtAuthorName" />
+ 
+             <TextView
+                 android:id="@+id/descriptionText"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:layout_marginTop="24dp"
++                android:layout_marginTop="8dp"
+                 android:text="Description"
++                app:layout_constraintStart_toStartOf="@+id/guideline3"
++                app:layout_constraintTop_toBottomOf="@+id/pagesText" />
++
++            <TextView
++                android:id="@+id/txtDescription"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_marginTop="8dp"
++                android:text="Long Description"
+                 app:layout_constraintStart_toStartOf="@+id/guideline4"
+-                app:layout_constraintTop_toBottomOf="@+id/pageText" />
++                app:layout_constraintTop_toBottomOf="@+id/txtPages" />
+ 
+             <androidx.constraintlayout.widget.Guideline
+-                android:id="@+id/guideline3"
++                android:id="@+id/guideline"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:orientation="vertical"
++                app:layout_constraintGuide_begin="205dp" />
++
++            <androidx.constraintlayout.widget.Guideline
++                android:id="@+id/guideline2"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:orientation="horizontal"
+-                app:layout_constraintGuide_begin="340dp" />
++                app:layout_constraintGuide_begin="356dp" />
+ 
+             <androidx.constraintlayout.widget.Guideline
+-                android:id="@+id/guideline4"
++                android:id="@+id/guideline3"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical"
+-                app:layout_constraintGuide_begin="20dp" />
++                app:layout_constraintGuide_end="391dp" />
+ 
+             <androidx.constraintlayout.widget.Guideline
+-                android:id="@+id/guideline5"
++                android:id="@+id/guideline4"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical"
+-                app:layout_constraintGuide_begin="108dp" />
++                app:layout_constraintGuide_begin="116dp" />
+ 
+-        </androidx.constraintlayout.widget.ConstraintLayout>
++
++        </androidx.constraintlayout.widget.ConstraintLayout>>
+ 
+     </ScrollView>
+ 
+Index: app/src/main/res/layout/activity_website.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_website.xml b/app/src/main/res/layout/activity_website.xml
+new file mode 100644
+--- /dev/null	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
++++ b/app/src/main/res/layout/activity_website.xml	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -0,0 +1,16 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:id="@+id/webViewer"
++    tools:context=".WebsiteActivity">
++
++    <WebView
++        android:layout_width="409dp"
++        android:layout_height="729dp"
++        tools:layout_editor_absoluteX="1dp"
++        tools:layout_editor_absoluteY="1dp"/>
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/list_item_book.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/list_item_book.xml b/app/src/main/res/layout/list_item_book.xml
+--- a/app/src/main/res/layout/list_item_book.xml	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/res/layout/list_item_book.xml	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -15,7 +15,8 @@
+         <RelativeLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+-            android:id="@+id/collapsedRelativeLayout">
++            android:id="@+id/collapsedRelLayout">
++
+ 
+             <ImageView
+                 android:layout_width="200dp"
+@@ -29,7 +30,7 @@
+                 android:text="Book Name"
+                 android:textStyle="bold"
+                 android:textSize="16sp"
+-                android:layout_below="@id/imgBook"
++                android:layout_below="@+id/imgBook"
+                 android:layout_marginTop="7dp"
+                 android:id="@+id/txtBookName"/>
+ 
+@@ -48,14 +49,15 @@
+         <RelativeLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+-            android:layout_below="@+id/collapsedRelativeLayout"
++            android:layout_below="@+id/collapsedRelLayout"
+             android:id="@+id/expandedRelLayout"
+             android:visibility="gone">
+ 
++
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:text="Author"
++                android:text="Author:"
+                 android:id="@+id/authorText"/>
+ 
+             <TextView
+@@ -69,18 +71,31 @@
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="Short Description"
+-                android:id="@+id/txtShortDesc"
++                android:id="@+id/txtShortdesc"
+                 android:layout_below="@+id/txtAuthor"
+-                android:layout_marginTop="7dp"/>
++                android:layout_marginTop="7dp"
++                />
+ 
+             <ImageView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:src="@drawable/ic_up_arrow"
+-                android:layout_below="@id/txtShortDesc"
++                android:layout_below="@+id/txtShortdesc"
+                 android:layout_alignParentEnd="true"
+                 android:id="@+id/btnUpArrow"/>
+ 
++            <TextView
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:text="Delete"
++                android:layout_below="@+id/txtShortdesc"
++                android:layout_toStartOf="@+id/btnUpArrow"
++                android:layout_marginEnd="7dp"
++                android:textColor="@color/pink"
++                android:id="@+id/btnDelete"
++                android:visibility="gone"
++                />
++
+         </RelativeLayout>
+ 
+     </RelativeLayout>
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+--- a/app/src/main/res/values/colors.xml	(revision 6d227f8aeab2645e32636c6b5c7b837225c6290b)
++++ b/app/src/main/res/values/colors.xml	(revision 102f2d312d4f9364b266b28c7870e73cc7b5b27a)
+@@ -7,4 +7,6 @@
+     <color name="teal_700">#FF018786</color>
+     <color name="black">#FF000000</color>
+     <color name="white">#FFFFFFFF</color>
++    <color name="pink">#FDA7DF</color>
++
+ </resources>
+\ No newline at end of file
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-16LE
+===================================================================
+diff --git a/README.md b/README.md
+new file mode 100644
+--- /dev/null	(revision ec9adbdc920a321a1772da625249ef3f655fd5ad)
++++ b/README.md	(revision ec9adbdc920a321a1772da625249ef3f655fd5ad)
+@@ -0,0 +1,1 @@
++# BookLibrary1
