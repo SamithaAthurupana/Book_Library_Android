@@ -21,7 +21,7 @@ public class AllBooksActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         adapter = new BookRecViewAdapter(this, "allBooks");
-        booksRecView = findViewById(R.id.bookRecView);
+        booksRecView = findViewById(R.id.booksRecView);
 
         booksRecView.setAdapter(adapter);
         booksRecView.setLayoutManager(new LinearLayoutManager(this));
